@@ -1,0 +1,11 @@
+tensorflow==1.4.0
+pandas==0.22.0
+matplotlib==2.2.2
+opencv_python==3.4.2.17
+numpy==1.14.4
+scipy==1.0.1
+simplejson==3.16.0
+Unidecode==1.0.22
+Flask==0.10.1
+protobuf==3.6.0
+pytest==3.6.2
