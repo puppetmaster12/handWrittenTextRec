@@ -1,3 +1,4 @@
 [
-  "test_new.py::test_new"
+  "test_new.py::test_new",
+  "test_request.py::test_request"
 ]
