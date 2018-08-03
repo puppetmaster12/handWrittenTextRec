@@ -51,14 +51,14 @@ def recognize():
             image = cv2.cvtColor(cv2.imread("images/"+filename), cv2.COLOR_BGR2RGB)
             crop = page.detection(image)
             bBoxes = words.detection(crop)
-            cycler = Cycler.Cycler(crop,bBoxes)
+            cycler = Cycler.Cycler(crop,bBoxes,charClass)
             allWords = []
             for i in range(len(bBoxes)-1):
                 allWords.append(cycler.idxImage(i))
                 print(allWords[i])
 
 
-    return render_template('index.html')
+    return render_template('words.html', allWords=allWords)
 
 if __name__ == "__main__":
     app.run()
