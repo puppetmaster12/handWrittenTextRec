@@ -16,16 +16,68 @@
 
   <!-- Google fonts -->
   <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Slabo+27px" rel="stylesheet">
+
   </head>
   <body>
     <div class="container-fluid">
       <div class="jumbotron header text-center">
           <h3>Hand written text recognition</h3>
       </div>
-      <form class="" action="{{ url_for('recognize') }}" method="post" enctype="multipart/form-data">
-          <input type="file" name="image">
-          <input type="submit" class="btn btn-success" name="btnSubmit" value="Recognize">
+      <form id="image-form" class="" action="{{ url_for('recognize') }}" method="post" enctype="multipart/form-data">
+          <input type="file" name="image" onchange="showPreview(this)">
+          <img id="placeholder" width="200" height="300" src="placeholder.png" alt="">
+          <input type="submit" class="btn btn-success" id="btnSubmit" name="btnSubmit" value="Recognize">
       </form>
+
+      <div class="display-form well">
+
+      </div>
+
+      <div class="container loading-container">
+          <img id="loading" width="100" height="100" src="{{url_for('static', filename='loading.gif')}}" alt="loading" hidden>
+      </div>
     </div>
+    <script type="text/javascript">
+    function showPreview(objFileInput) {
+        if (objFileInput.files[0]) {
+            var fileReader = new FileReader();
+            fileReader.onload = function (e) {
+              $('#placeholder').attr('src', e.target.result)
+            }
+        fileReader.readAsDataURL(objFileInput.files[0]);
+        }
+    }
+    </script>
+    <script type="text/javascript">
+      $(document).ready(function(e){
+        $('#image-form').on('submit', function(e){
+          e.preventDefault()
+          $('.display-form').empty()
+          console.log("test");
+          $('#loading').removeAttr('hidden')
+          var form_data = new FormData(this)
+
+          $.ajax({
+            url: "{{ url_for('recognize') }}",
+            type: 'POST',
+            data: form_data,
+            processData: false,
+            contentType: false
+          })
+          .done(function(data){
+              $('#loading').attr('hidden', true)
+              console.log(data.allWords);
+              $.each(data.allWords, function(k,v){
+                  $('.display-form').append(v + " ")
+              });
+          })
+          .fail(function(data){
+              console.log(data);
+          });
+        });
+      });
+    </script>
   </body>
+
 </html>

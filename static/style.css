@@ -7,3 +7,14 @@
     font-family: 'Indie Flower', cursive;
     color: #fff;
 }
+.all-words
+{
+    text-align: justify;
+}
+.display-form
+{
+   font-family: font-family: 'Slabo', serif;
+   font-size: 16px;
+   margin: 20px;
+   border: 1px solid #000;
+}

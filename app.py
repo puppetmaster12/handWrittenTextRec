@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, json
+from flask import Flask, render_template, request, json, jsonify
 import tensorflow as tf
 import numpy as np
 import pandas as pd
@@ -58,7 +58,7 @@ def recognize():
                 print(allWords[i])
 
 
-    return render_template('words.html', allWords=allWords)
+    return jsonify(allWords=allWords)
 
 if __name__ == "__main__":
     app.run()
