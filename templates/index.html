@@ -13,24 +13,72 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   <!-- Custom style sheet -->
   <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
-
+  <!-- Font awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
   <!-- Google fonts -->
   <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Slabo+27px" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Merienda" rel="stylesheet">
 
+  <!-- CKeditor -->
+  <!-- <script src="{{url_for('static', filename='plugins/ckeditor/ckeditor.js')}}" charset="utf-8"></script> -->
   </head>
   <body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-default">
     <div class="container-fluid">
-      <div class="jumbotron header text-center">
-          <h3>Hand written text recognition</h3>
+      <div class="navbar-header nav-head">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">HandRec</a>
       </div>
+      <div class="collapse navbar-collapse navbar-right" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li><a href="#">About</a></li>
+          <li><a href="#">Documentation</a></li>
+        </ul>
+     </div>
+      <!-- <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Home</a></li>
+        <li><a href="#">Page 1</a></li>
+        <li><a href="#">Page 2</a></li>
+        <li><a href="#">Page 3</a></li>
+      </ul> -->
+    </div>
+    </nav>
+    <div class="container clearfix form-container">
       <form id="image-form" class="" action="{{ url_for('recognize') }}" method="post" enctype="multipart/form-data">
-          <input type="file" name="image" onchange="showPreview(this)">
-          <img id="placeholder" width="200" height="300" src="placeholder.png" alt="">
-          <input type="submit" class="btn btn-success" id="btnSubmit" name="btnSubmit" value="Recognize">
+          <input id="image-input" class="inputfile" type="file" name="image" onchange="showPreview(this)">
+          <label for="image-input"> <i class="fa fa-upload"></i> Choose image</label>
+          <input type="submit" class="btn btn-success" id="btnSubmit" name="btnSubmit" value="Recognize" disabled>
       </form>
-
-      <div class="display-form well">
+      <div class="placeholder-container">
+          <img id="placeholder" width="500" height="300" src="" alt="">
+      </div>
+      <div class="font-container">
+        <div class="form-group">
+          <label class="font-label" for="select-font">Select Font</label>
+          <select class="form-control" name="select-font" id="select-font" data-live-search="true" disabled>
+              <option value="Slabo,serif" style="font-family:Slabo, serif">Slabo</option>
+              <option value="Indie Flower,cursive" style="font-family:Indie Flower, cursive">Indie Flower</option>
+              <option value="Merienda,cursive" style="font-family: Merienda, cursive">Merienda</option>
+          </select>
+        </div>
+      </div>
+      <div class="download-buttons">
+          <button class="down-btn hidden pdf-btn" type="button" name="button">Download as pdf <i class="fas fa-file-pdf"></i> </button>
+          <button class="down-btn hidden doc-btn" type="button" name="button">Download as docx <i class="fas fa-file-word"></i> </button>
+      </div>
+      <form id="pdfForm" class="hidden" action="savePdf" method="post">
+          <input id="text" type="text" name="text" value="">
+      </form>
+      <form id="docForm" class="hidden" action="saveDoc" method="post">
+          <input id="textDoc" type="text" name="textDoc" value="">
+      </form>
+      <div id="display-form" class="display-form well">
 
       </div>
 
@@ -38,8 +86,11 @@
           <img id="loading" width="100" height="100" src="{{url_for('static', filename='loading.gif')}}" alt="loading" hidden>
       </div>
     </div>
+
     <script type="text/javascript">
     function showPreview(objFileInput) {
+       $('#btnSubmit').removeAttr('disabled')
+       $('#select-font').removeAttr('disabled')
         if (objFileInput.files[0]) {
             var fileReader = new FileReader();
             fileReader.onload = function (e) {
@@ -51,10 +102,10 @@
     </script>
     <script type="text/javascript">
       $(document).ready(function(e){
+
         $('#image-form').on('submit', function(e){
           e.preventDefault()
           $('.display-form').empty()
-          console.log("test");
           $('#loading').removeAttr('hidden')
           var form_data = new FormData(this)
 
@@ -67,15 +118,41 @@
           })
           .done(function(data){
               $('#loading').attr('hidden', true)
-              console.log(data.allWords);
               $.each(data.allWords, function(k,v){
                   $('.display-form').append(v + " ")
               });
+              $('.down-btn').removeClass('hidden')
           })
           .fail(function(data){
               console.log(data);
           });
         });
+      });
+    </script>
+    <!-- FONT CHANGE -->
+    <script type="text/javascript">
+        $('#select-font').on('change', function(){
+            var font = $(this).val();
+            var i, tags;
+            tags = document.getElementById("display-form").style.fontFamily = font;
+
+        });
+    </script>
+    <!-- SAVE FILES -->
+    <!-- PDF -->
+    <script type="text/javascript">
+        $('.pdf-btn').on('click', function(){
+            var text = $('.display-form').text()
+            $('#text').val(text)
+            $('#pdfForm').submit()
+        });
+    </script>
+    <!-- DOCX -->
+    <script type="text/javascript">
+      $('.doc-btn').on('click', function(){
+          var text = $('.display-form').text()
+          $('#textDoc').val(text)
+          $('#docForm').submit()
       });
     </script>
   </body>
