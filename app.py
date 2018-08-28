@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, request, json, jsonify, send_file
 import tensorflow as tf
 import numpy as np
@@ -63,7 +64,7 @@ def recognize():
             allWords = []
             for i in range(len(bBoxes)-1):
                 allWords.append(cycler.idxImage(i))
-                print(allWords[i])
+                # print(allWords[i])
     # stop = current_milli_time()
     # print(stop - start)
 

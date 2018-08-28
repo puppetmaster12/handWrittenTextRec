@@ -1,1 +1,5 @@
-[]
+[
+  "tests/test_graynoalpha.py::test_graynoalpha",
+  "tests/test_savedoc.py::test_savedoc",
+  "tests/test_savepdf.py::test_savepdf"
+]
