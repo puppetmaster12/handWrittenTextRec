@@ -9,5 +9,5 @@ Unidecode==1.0.22
 Flask==0.10.1
 protobuf==3.6.0
 pytest==3.6.2
-reportlab=3.5.6
-python-docx=0.8.7
+reportlab==3.5.6
+python-docx==0.8.7
